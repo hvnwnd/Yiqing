@@ -9,12 +9,37 @@
 import UIKit
 
 class ViewController: UIViewController {
-
+    @IBOutlet var tableView: UITableView!
+    @IBOutlet var segmentedControl: UISegmentedControl!
+    
+    var list: [Locality] = []
+    
     override func viewDidLoad() {
         super.viewDidLoad()
-        // Do any additional setup after loading the view.
+        
+//        tableView.register(LocalityCell.self, forCellReuseIdentifier: "LocalityCell")
+        APIClient.shared.request { [unowned self](list) in
+            DispatchQueue.main.async {
+                self.list = list
+                self.tableView.reloadData()
+            }
+        }
     }
-
-
 }
 
+extension ViewController: UITableViewDataSource, UITableViewDelegate {
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        list.count
+    }
+
+    
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        guard let cell = tableView.dequeueReusableCell(withIdentifier: "LocalityCell") as? LocalityCell else { fatalError() }
+        let locality = list[indexPath.row]
+        
+        cell.configure(locality)
+        
+        return cell
+    }
+
+}
