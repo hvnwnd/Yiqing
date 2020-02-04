@@ -17,7 +17,15 @@ class ViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-//        tableView.register(LocalityCell.self, forCellReuseIdentifier: "LocalityCell")
+        
+        let refreshControl = UIRefreshControl()
+        refreshControl.addTarget(self, action: #selector(reload), for: .valueChanged)
+        tableView.refreshControl = refreshControl
+        
+        reload()
+    }
+    
+    @objc func reload() {
         APIClient.shared.request { [unowned self](list) in
             DispatchQueue.main.async {
                 self.list = list
