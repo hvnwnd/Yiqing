@@ -26,10 +26,12 @@ class ViewController: UIViewController {
     }
     
     @objc func reload() {
+        tableView.refreshControl?.beginRefreshing()
         APIClient.shared.request { [unowned self](list) in
             DispatchQueue.main.async {
                 self.list = list
                 self.tableView.reloadData()
+                self.tableView.refreshControl?.endRefreshing()
             }
         }
     }
